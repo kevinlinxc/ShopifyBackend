@@ -100,7 +100,7 @@ class CameraInventory:
         :param item: backend name of item to delete
         :return: None. Modifies session_state
         """
-        st.session_state["focus"] = Focus.none
+        st.session_state["focus"] = Focus.none.value
         self.items.pop(item)
         items_to_json = json.dumps(self.items)
         st.session_state["items"] = items_to_json
@@ -118,15 +118,15 @@ class CameraInventory:
 
         camera_brands = ["Canon", "Nikon", "Sony", "Panasonic", "Pentax"]
         # make default functionality of center of web app adding a new item
-        st.session_state["focus"] = st.session_state.get("focus", Focus.new)
+        st.session_state["focus"] = st.session_state.get("focus", Focus.new.value)
         if self.sidebar.button("Add a new item", help="Click to add a new item"):
             # use session state to change center of page's function instead of variables, since Streamlit runs
             # top to bottom every time a widget is interacted with so variables would not work
-            st.session_state["focus"] = Focus.new
+            st.session_state["focus"] = Focus.new.value
         # visual separator
         self.sidebar.markdown("---------")
 
-        if st.session_state["focus"] == Focus.new:
+        if st.session_state["focus"] == Focus.new.value:
             # user is on the new item creation screen
             # display new item dialogue
             st.markdown("# Add a new item")
@@ -149,11 +149,11 @@ class CameraInventory:
             st.button(
                 "Save",
                 on_click=self.update_focus,
-                args=[Focus.none, name, brand, received_day, notes, backend_name],
+                args=[Focus.none.value, name, brand, received_day, notes, backend_name],
             )
             self.refresh_inventory()
 
-        elif st.session_state["focus"] == Focus.none:
+        elif st.session_state["focus"] == Focus.none.value:
             # user has just saved a new item/edited another item
             st.markdown("Click an item to see/edit its information, or add a new item")
             self.refresh_inventory()
@@ -187,7 +187,7 @@ class CameraInventory:
             st.button(
                 "Save edits",
                 on_click=self.update_focus,
-                args=[Focus.none, name, brand, received_day, notes, backend_name],
+                args=[Focus.none.value, name, brand, received_day, notes, backend_name],
             )
             st.button("Delete", on_click=self.delete_item, args=[backend_name])
             self.refresh_inventory()
