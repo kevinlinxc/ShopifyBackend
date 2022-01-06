@@ -13,7 +13,7 @@ the version that you just downloaded.
 5. Use `streamlit run main.py` in a terminal to run the web app. The terminal will tell you which localhost link you'll be able to see the website on. The site should be visitable at [http://localhost:8501](http://localhost:8501).
 6. Use the form in the center of the screen to add items. Once added, they will be in the inventory list on the left. You can click on any of the created items
 to edit or delete them. This satisfies the CRUD functionality.
-7. Use the export to CSV file to export the data to CSV.
+7. Use the Downlaod CSV button to export the data to CSV.
 
 # Future feature development considerations
 Streamlit (and Python) is made for prototyping, and so it is a little bit slow in comparison to other languages. Nonetheless,
