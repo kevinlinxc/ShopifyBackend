@@ -1,5 +1,5 @@
 # ShopifyBackend
-Shopify Backend Challenge for Summer 2022
+[Shopify Backend Developer Intern Challenge](https://docs.google.com/document/d/1z9LZ_kZBUbg-O2MhZVVSqTmvDko5IJWHtuFmIu_Xg1A/) for Summer 2022 by Kevin Lin
 
 ![alt text](demo.gif)
 # Instructions to use:
