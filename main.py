@@ -2,7 +2,7 @@ import streamlit as st
 import json
 import datetime
 from dataclasses import dataclass
-
+import csv
 
 def page_setup():
     st.set_page_config(page_title="Shopify Camera Inventory Tracker", page_icon="camera.png")
@@ -34,11 +34,11 @@ class CameraInventory:
         self.sidebar = st.sidebar
         self.create_inventory()
 
-    def update_focus(self, focus, name=None, brand=None, received_day=None, notes=None, canonical_name=None):
+    def update_focus(self, focus, name=None, brand=None, received_day=None, notes=None, backend_name=None):
         st.session_state["focus"] = focus
         if name:
             dict_to_save = CameraItem(name, brand, received_day.strftime("%d/%m/%Y"), notes).__dict__
-            self.items[canonical_name] = dict_to_save
+            self.items[backend_name] = dict_to_save
             items_to_json = json.dumps(self.items)
             st.session_state["items"] = items_to_json
 
@@ -70,25 +70,24 @@ class CameraInventory:
                                      value=f"Camera {len(self.items.items()) + 1}")
                 now = datetime.datetime.now()
                 dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-                canonical_name = name + dt_string
+                backend_name = name + dt_string
                 brand = st.selectbox("Camera brand:", options=camera_brands, help="brand of the camera")
                 received_day = st.date_input("Date when camera entered inventory:",
                                              help="Year that the camera model was released")
                 notes = st.text_area("Notes", value="e.g. quality of camera")
-                st.form_submit_button("Save", on_click=self.update_focus, args=["none", name, brand, received_day, notes, canonical_name])
+                st.form_submit_button("Save", on_click=self.update_focus, args=["none", name, brand, received_day, notes, backend_name])
             self.refresh_sidebar()
 
         elif st.session_state["focus"] == "none":
             # user has just saved a new item/edited another item
-            st.markdown("Click an item to see its information, or add a new item")
+            st.markdown("Click an item to see/edit its information, or add a new item")
             self.refresh_sidebar()
 
         else:
             # user has clicked on an inventory item, and wants to edit it
             # a bit DRY, but the abstracted function would honestly be more confusing to read
-
-            canonical_name = st.session_state["focus"]
-            item_to_edit = self.items[canonical_name]
+            backend_name = st.session_state["focus"]
+            item_to_edit = self.items[backend_name]
             st.markdown(f"# Editing/Viewing {item_to_edit['name']}")
             name = st.text_input("Camera name:", help="User friendly name for camera",
                                  value=f"{item_to_edit['name']}")
@@ -98,13 +97,24 @@ class CameraInventory:
                                          help="Year that the camera model was released", value=reformatted_date)
             notes = st.text_area("Notes", value=item_to_edit['notes'])
             st.button("Save edits", on_click=self.update_focus,
-                                  args=["none", name, brand, received_day, notes, canonical_name])
-            st.button("Delete", on_click=self.delete_item, args=[canonical_name])
+                                  args=["none", name, brand, received_day, notes, backend_name])
+            st.button("Delete", on_click=self.delete_item, args=[backend_name])
             self.refresh_sidebar()
 
     def refresh_sidebar(self):
         if len(self.items.items()) > 0:
             self.sidebar.markdown("# Current Inventory:")
+            with open("file.csv", "w", newline='') as csvfile:
+                fieldnames = ["backend_name", "name", "brand", "received_day", "notes"]
+                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+                writer.writeheader()
+                for backend_name in self.items:
+                    item_dict_copy = self.items[backend_name].copy()
+                    item_dict_copy["backend_name"] = backend_name
+                    writer.writerow(item_dict_copy)
+            with open("file.csv", "r") as f:
+                self.sidebar.download_button('Download CSV', f, mime='text/csv', file_name="shopify_backend_kevinlinxc.csv")
+
         for name in self.items:
             camera_item = self.items[name]
             self.sidebar.button(camera_item["name"] + " Created on: " + camera_item["received_day"],
