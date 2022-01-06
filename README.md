@@ -1,7 +1,7 @@
 # ShopifyBackend
 Shopify Backend Challenge for Summer 2022
 
-
+![alt text](demo.gif)
 # Instructions to use:
 
 1. Install the latest version of Python. For a good guide on installing Python, see [here](https://realpython.com/installing-python/).

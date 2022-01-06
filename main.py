@@ -32,6 +32,7 @@ class CameraInventory:
         else:
             self.items = {}
         self.sidebar = st.sidebar
+        st.write("# Shopify Backend Camera Inventory System by Kevin Lin")
         self.create_inventory()
 
     def update_focus(self, focus, name=None, brand=None, received_day=None, notes=None, backend_name=None):
@@ -63,19 +64,18 @@ class CameraInventory:
 
         if st.session_state["focus"] == "new":
             # user is on the new item creation screen
-            with st.form(key='new_form'):
-                # display new item dialogue
-                st.markdown("# Add a new item")
-                name = st.text_input("Camera name:", help="User friendly name for camera",
-                                     value=f"Camera {len(self.items.items()) + 1}")
-                now = datetime.datetime.now()
-                dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-                backend_name = name + dt_string
-                brand = st.selectbox("Camera brand:", options=camera_brands, help="brand of the camera")
-                received_day = st.date_input("Date when camera entered inventory:",
-                                             help="Year that the camera model was released")
-                notes = st.text_area("Notes", value="e.g. quality of camera")
-                st.form_submit_button("Save", on_click=self.update_focus, args=["none", name, brand, received_day, notes, backend_name])
+            # display new item dialogue
+            st.markdown("# Add a new item")
+            name = st.text_input("Camera name:", help="User friendly name for camera",
+                                 value=f"Camera {len(self.items.items()) + 1}")
+            now = datetime.datetime.now()
+            dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+            backend_name = name + dt_string
+            brand = st.selectbox("Camera brand:", options=camera_brands, help="brand of the camera")
+            received_day = st.date_input("Date when camera entered inventory:",
+                                         help="Year that the camera model was released")
+            notes = st.text_area("Notes", value="e.g. quality of camera")
+            st.button("Save", on_click=self.update_focus, args=["none", name, brand, received_day, notes, backend_name])
             self.refresh_sidebar()
 
         elif st.session_state["focus"] == "none":
